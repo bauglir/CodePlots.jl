@@ -1,0 +1,4 @@
+name = "PlantUML"
+uuid = "e3b9e18e-aad1-11e9-0286-b14383cd97e3"
+authors = ["Joris Kraak <me@joriskraak.nl>"]
+version = "0.0.0"
