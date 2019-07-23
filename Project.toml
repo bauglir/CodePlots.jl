@@ -2,3 +2,9 @@ name = "PlantUML"
 uuid = "e3b9e18e-aad1-11e9-0286-b14383cd97e3"
 authors = ["Joris Kraak <me@joriskraak.nl>"]
 version = "0.0.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[target]
+test = [ "Test" ]
