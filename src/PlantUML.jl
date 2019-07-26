@@ -25,4 +25,7 @@ end
 # without an explicit dispatch on the MIME type
 show(io::IO, diagram::Diagram) = write(io, render(diagram, :txt))
 
+show(io::IO, ::MIME"image/png", diagram::Diagram) =
+  write(io, render(diagram, :png))
+
 end
