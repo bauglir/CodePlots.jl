@@ -28,4 +28,7 @@ show(io::IO, diagram::Diagram) = write(io, render(diagram, :txt))
 show(io::IO, ::MIME"image/png", diagram::Diagram) =
   write(io, render(diagram, :png))
 
+show(io::IO, ::MIME"image/svg+xml", diagram::Diagram) =
+  write(io, render(diagram, :svg))
+
 end

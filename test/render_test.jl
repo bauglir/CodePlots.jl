@@ -28,6 +28,22 @@ using PlantUML: Diagram
 
     @test actual_render == expected_render
   end
+
+  @testset "to SVG" begin
+    buffer = IOBuffer()
+    expected_render = String(read(joinpath(@__DIR__, "renders", "bob-hello-alice.svg")))
+
+    show(buffer, MIME("image/svg+xml"), diagram)
+    # The rendered version uses CRLF line-endings and information about the
+    # PlantUML server that rendered it. The prerendered version only has LF as
+    # enforced by Git and removed the server information as that is likely to
+    # change over time and shouldn't break tests. The rendered version needs
+    # these stripped
+    actual_render = replace(String(take!(buffer)), r"\r\n" => '\n')
+    actual_render = replace(actual_render , r"@enduml.+?</g>"s => "@enduml\n--></g>")
+
+    @test actual_render == expected_render
+  end
 end
 
 end
