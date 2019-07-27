@@ -1,8 +1,8 @@
-module PlantUMLTest
+module CodePlotsTest
 
 using Test: @testset
 
-@testset "PlantUML" begin
+@testset "CodePlots" begin
   include("./render_test.jl")
 end
 

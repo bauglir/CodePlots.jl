@@ -1,4 +1,4 @@
-module PlantUML
+module CodePlots
 
 using HTTP: get
 

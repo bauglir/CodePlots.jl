@@ -2,7 +2,7 @@ module RenderTest
 
 using Test: @testset, @test
 
-using PlantUML: Diagram
+using CodePlots: Diagram
 
 @testset "rendering" begin
   diagram = Diagram("Bob -> Alice : Hello")
