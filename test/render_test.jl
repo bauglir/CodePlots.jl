@@ -2,10 +2,10 @@ module RenderTest
 
 using Test: @testset, @test
 
-using CodePlots: Diagram
+using CodePlots: PlantUML
 
 @testset "rendering" begin
-  diagram = Diagram("Bob -> Alice : Hello")
+  diagram = PlantUML("Bob -> Alice : Hello")
 
   @testset "to ASCII" begin
     buffer = IOBuffer()
