@@ -3,6 +3,16 @@ module Diagrammables
 module EmptyModule
 end
 
+module ModuleWithExportedType
+  export ExportedAbstractType, ExportedType
+
+  abstract type ExportedAbstractType
+  end
+
+  struct ExportedType
+  end
+end
+
 module ModuleWithExportedFunction
   export exportedFunction
 

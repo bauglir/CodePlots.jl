@@ -38,6 +38,19 @@ include("./support/diagrammables.jl")
         @test startswith(member_name, "Submodule")
       end
     end
+
+    @testset "containing exported type" begin
+      cm = ChildMap(Diagrammables.ModuleWithExportedType)
+
+      # The module exports two types, one abstract and one concrete
+      @test length(cm.children) === 2
+
+      @test cm.children[1] isa ChildMap{DataType}
+      @test endswith(cm.children[1].name, "ExportedAbstractType")
+
+      @test cm.children[2] isa ChildMap{DataType}
+      @test endswith(cm.children[2].name, "ExportedType")
+    end
   end
 end
 

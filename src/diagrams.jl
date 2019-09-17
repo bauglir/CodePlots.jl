@@ -8,6 +8,8 @@ end
 getModuleMember(m::Module) = (child_name::Symbol) -> getfield(m, child_name)
 moduleChildCanBeMapped(m::Module) = child -> child !== m
 
+ChildMap(dt::DataType) = ChildMap{DataType}("$dt", [])
+
 ChildMap(f::Function) = ChildMap{Function}("$f", [])
 
 function ChildMap(m::Module)
