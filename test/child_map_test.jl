@@ -15,6 +15,15 @@ include("./support/diagrammables.jl")
       @test endswith(cm.name, ".EmptyModule")
     end
 
+    @testset "containing exported function" begin
+      cm = ChildMap(Diagrammables.ModuleWithExportedFunction)
+
+      # The module exports a single function
+      @test length(cm.children) === 1
+      @test cm.children[1] isa ChildMap{Function}
+      @test endswith(cm.children[1].name, "exportedFunction")
+    end
+
     @testset "containing exported submodules" begin
       cm = ChildMap(Diagrammables.ModuleWithExportedSubModules)
 

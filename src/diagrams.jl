@@ -8,6 +8,8 @@ end
 getModuleMember(m::Module) = (child_name::Symbol) -> getfield(m, child_name)
 moduleChildCanBeMapped(m::Module) = child -> child !== m
 
+ChildMap(f::Function) = ChildMap{Function}("$f", [])
+
 function ChildMap(m::Module)
   available_children = map(getModuleMember(m), names(m))
 
