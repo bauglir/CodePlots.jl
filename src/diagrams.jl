@@ -1,42 +1,47 @@
 module Diagrams
 
-struct ChildMapConfig
+struct MemberMapConfig
   exportedOnly::Bool
 
-  ChildMapConfig( ; exportedOnly::Bool = true) = new(exportedOnly)
+  MemberMapConfig( ; exportedOnly::Bool = true) = new(exportedOnly)
 end
 
-struct ChildMap{T}
+struct MemberMap{T}
   name::AbstractString
-  children::Vector{ChildMap}
+  members::Vector{MemberMap}
 end
 
-getModuleMember(m::Module) = (child_name::Symbol) -> getfield(m, child_name)
-moduleChildCanBeMapped(m::Module) = child -> child !== m && childTypeIsMappable(child)
+getModuleMember(m::Module) = (member_name::Symbol) -> getfield(m, member_name)
+memberCanBeMapped(m::Module) = member -> member !== m && memberIsMappable(member)
 
-ChildMap(dt::DataType, config::ChildMapConfig = ChildMapConfig()) =
-  ChildMap{DataType}("$dt", [])
-ChildMap(f::Function, config::ChildMapConfig = ChildMapConfig()) =
-  ChildMap{Function}("$f", [])
+MemberMap(dt::DataType, config::MemberMapConfig = MemberMapConfig()) =
+  MemberMap{DataType}("$dt", [])
+MemberMap(f::Function, config::MemberMapConfig = MemberMapConfig()) =
+  MemberMap{Function}("$f", [])
 
-function ChildMap(m::Module, config::ChildMapConfig = ChildMapConfig())
-  available_children = map(
+function MemberMap(m::Module, config::MemberMapConfig = MemberMapConfig())
+  available_members = map(
     getModuleMember(m), names(m; all = !config.exportedOnly)
   )
 
-  mappable_children = filter(moduleChildCanBeMapped(m), available_children)
+  mappable_members = filter(
+    # The set of available members contains a reference to the containing
+    # module itself. This reference needs to be removed from the set of
+    # mappable members to prevent an infinite recursion
+    member -> member !== m && memberCanBeMapped(member), available_members
+  )
 
-  ChildMap{Module}(
-    "$m", map(child -> ChildMap(child, config), mappable_children)
+  MemberMap{Module}(
+    "$m", map(member -> MemberMap(member, config), mappable_members)
   )
 end
 
-childTypeIsMappable(::Any) = false
-childTypeIsMappable(d::DataType) = !any(
+memberCanBeMapped(::Any) = false
+memberCanBeMapped(d::DataType) = !any(
   map(prefix -> startswith("$d", prefix), [ "getfield", "typeof" ])
 )
-childTypeIsMappable(::Module) = true
-function childTypeIsMappable(f::Function)
+memberCanBeMapped(::Module) = true
+function memberCanBeMapped(f::Function)
   functionName = "$f"
 
   # Some functions are always defined within a Module. These should not show up
