@@ -30,4 +30,12 @@ module ModuleWithExportedSubModules
   end
 end
 
+module ModuleWithUnexportedType
+  abstract type UnexportedAbstractType
+  end
+
+  struct UnexportedType
+  end
+end
+
 end

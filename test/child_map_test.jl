@@ -2,7 +2,7 @@ module ChildMapTest
 
 using Test: @test, @testset
 
-using CodePlots: ChildMap
+using CodePlots: ChildMap, ChildMapConfig
 
 include("./support/diagrammables.jl")
 
@@ -50,6 +50,24 @@ include("./support/diagrammables.jl")
 
       @test cm.children[2] isa ChildMap{DataType}
       @test endswith(cm.children[2].name, "ExportedType")
+    end
+
+    @testset "containing unexported types" begin
+      cm = ChildMap(
+        Diagrammables.ModuleWithUnexportedType,
+        ChildMapConfig(exportedOnly = false)
+      )
+
+      # The module contains two types, one abstract and one concrete. Only
+      # types and functions defined in code should be present in the
+      # representation.
+      @test length(cm.children) === 2
+
+      @test cm.children[1] isa ChildMap{DataType}
+      @test endswith(cm.children[1].name, "UnexportedAbstractType")
+
+      @test cm.children[2] isa ChildMap{DataType}
+      @test endswith(cm.children[2].name, "UnexportedType")
     end
   end
 end
