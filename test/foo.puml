@@ -1,0 +1,14 @@
+package CodePlots {
+class ChildMapConfig << (S, #00cccc) >>
+package CodePlots.Renderers {
+class CodePlots.Renderers.AbstractRenderer << (S, #00cccc) >>
+class CodePlots.Renderers.HexPayload << (F, #cccc00) >>
+class PlantUML << (S, #00cccc) >>
+class CodePlots.Renderers.eval << (F, #cccc00) >>
+class CodePlots.Renderers.include << (F, #cccc00) >>
+class CodePlots.Renderers.render << (F, #cccc00) >>
+}
+class CodePlots.childMappable << (F, #cccc00) >>
+class CodePlots.eval << (F, #cccc00) >>
+class CodePlots.include << (F, #cccc00) >>
+}

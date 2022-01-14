@@ -4,6 +4,9 @@ using Test: @testset, @test
 
 using CodePlots: PlantUML
 
+# Encoded representation of "Bob -> Alice : Hello":
+# SyfFKj2rKt3CoKnELR1Io4ZDoSa70000
+
 @testset "rendering" begin
   diagram = PlantUML("Bob -> Alice : Hello")
 

@@ -15,6 +15,15 @@ include("./support/diagrammables.jl")
       @test endswith(mm.name, ".EmptyModule")
     end
 
+    # @testset "containing exported constant" begin
+      # mm = MemberMap(Diagrammables.ModuleWithExportedConstant)
+
+      # # The module exports a single constant
+      # @test length(mm.members) === 1
+      # @test mm.members[1] isa MemberMap{Any}
+      # @test endswith(mm.members[1].name, "EXPORTED_CONSTANT")
+    # end
+
     @testset "containing exported function" begin
       mm = MemberMap(Diagrammables.ModuleWithExportedFunction)
 

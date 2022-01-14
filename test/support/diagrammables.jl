@@ -3,6 +3,12 @@ module Diagrammables
 module EmptyModule
 end
 
+# module ModuleWithExportedConstant
+  # export EXPORTED_CONSTANT
+
+  # const EXPORTED_CONSTANT = true
+# end
+
 module ModuleWithExportedType
   export ExportedAbstractType, ExportedType
 

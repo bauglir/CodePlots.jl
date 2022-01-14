@@ -1,5 +1,11 @@
 module Diagrams
 
+const FOOBAR = "I'm a constant..."
+
+macro bar(expr::Expr)
+  expr
+end
+
 struct MemberMapConfig
   exportedOnly::Bool
 
@@ -8,40 +14,41 @@ end
 
 struct MemberMap{T}
   name::AbstractString
-  members::Vector{MemberMap}
+  members::Vector
 end
 
+# Even though a name is exported doesn't mean it is actually defined requiring
+# an explicit check before retrieving the member
+# getModuleMember(m::Module) = (member_name::Symbol) -> isdefined(m, member_name) && getfield(m, member_name)
 getModuleMember(m::Module) = (member_name::Symbol) -> getfield(m, member_name)
-memberCanBeMapped(m::Module) = member -> member !== m && memberIsMappable(member)
-
-MemberMap(dt::DataType, config::MemberMapConfig = MemberMapConfig()) =
-  MemberMap{DataType}("$dt", [])
-MemberMap(f::Function, config::MemberMapConfig = MemberMapConfig()) =
-  MemberMap{Function}("$f", [])
 
 function MemberMap(m::Module, config::MemberMapConfig = MemberMapConfig())
   available_members = map(
     getModuleMember(m), names(m; all = !config.exportedOnly)
   )
 
-  mappable_members = filter(
+  members_to_include = filter(
     # The set of available members contains a reference to the containing
-    # module itself. This reference needs to be removed from the set of
-    # mappable members to prevent an infinite recursion
-    member -> member !== m && memberCanBeMapped(member), available_members
+    # module itself. This reference needs to be removed from the set of members
+    # to prevent an infinite recursion
+    member -> member !== m && includeInMemberMap(member), available_members
+  )
+
+  recursively_mapped_members = map(
+    member -> MemberMap(member, config),
+    filter(isMemberMappable, members_to_include)
   )
 
   MemberMap{Module}(
-    "$m", map(member -> MemberMap(member, config), mappable_members)
+    "$m", vcat(members_to_include, recursively_mapped_members)
   )
 end
 
-memberCanBeMapped(::Any) = false
-memberCanBeMapped(d::DataType) = !any(
+includeInMemberMap(::Any) = true
+includeInMemberMap(d::DataType) = !any(
   map(prefix -> startswith("$d", prefix), [ "getfield", "typeof" ])
 )
-memberCanBeMapped(::Module) = true
-function memberCanBeMapped(f::Function)
+function includeInMemberMap(f::Function)
   functionName = "$f"
 
   # Some functions are always defined within a Module. These should not show up
@@ -51,10 +58,15 @@ function memberCanBeMapped(f::Function)
     ["eval", "include"]
   ))
 
+  # THIS CHECK IS NO LONGER NECESSARY? THIS APPARENTLY GETS CAUGHT BY THE
+  # DEFAULT CASE OF isMemberMappable!
   # Some functions in a Module are methods of functions and should be ignored
-  functionNameIsMethod = match(r"\.#", functionName) !== nothing
+  # functionNameIsMethod = match(r"\.#", functionName) !== nothing
 
-  !functionNameIsInExcludeSet && !functionNameIsMethod
+  !functionNameIsInExcludeSet# && !functionNameIsMethod
 end
+
+isMemberMappable(::Any) = false
+isMemberMappable(::Module) = true
 
 end
